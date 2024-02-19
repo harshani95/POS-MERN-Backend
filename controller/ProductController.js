@@ -79,6 +79,28 @@ const findAll=(req,resp)=>{
     }
 }
 
+const findAllMin=(req,resp)=>{
+    try{
+        ProductSchema.find({qtyOnHand:{$lt:10}}).then(data=>{
+            return resp.status(200).json(data);
+        })
+
+    }catch (error){
+        return resp.status(500).json({'message':'internal server error'});
+    }
+}
+
+const findCount=(req,resp)=>{
+    try{
+        ProductSchema.countDocuments().then(data=>{
+            return resp.status(200).json(data);
+        })
+
+    }catch (error){
+        return resp.status(500).json({'message':'internal server error'});
+    }
+}
+
 
 
 module.exports={
@@ -86,6 +108,8 @@ module.exports={
     findById,
     update,
     deleteById,
-    findAll
+    findAll,
+    findAllMin,
+    findCount
 }
 

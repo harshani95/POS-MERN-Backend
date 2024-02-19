@@ -14,15 +14,28 @@ const create=(req,resp)=>{
 }
 
 
-const findById=(req,resp)=>{
-    CustomerSchema.findOne({'_id':req.params.id}).then(selectedObj=>{
-        if(selectedObj!=null){
-           return  resp.status(200).json({'data':selectedObj});
-        }
-        return resp.status(404).json({'message':'customer not found!'});
-    });
-}
+// const findById=(req,resp)=>{
+//     CustomerSchema.findOne({'_id':req.params.id}).then(selectedObj=>{
+//         if(selectedObj!=null){
+//            return  resp.status(200).json(selectedObj);
+//         }
+//         return resp.status(404).json({'message':'customer not found!'});
+//     });
+// }
 
+const findById = async (req, res) => {
+    try {
+        const customer = await CustomerSchema.findById(req.params.id);
+        if (customer) {
+            res.status(200).json(customer);
+        } else {
+            res.status(404).json({ message: 'Customer not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching customer by ID:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 const update= async (req,resp)=>{
     const updateData = await CustomerSchema.findOneAndUpdate({'_id':req.params.id},{
@@ -68,8 +81,23 @@ const findAll=(req,resp)=>{
 
        const data =  CustomerSchema.find(query)
             .limit(pageSize)
-            .skip(skip);
-        return resp.status(200).json(data);
+            .skip(skip)
+            .then(response=>{
+                return resp.status(200).json(response);
+            })
+ 
+        
+    }catch (error){
+        return resp.status(500).json({'message':'internal server error'});
+    }
+}
+
+const findCount=(req,resp)=>{
+    try{
+        CustomerSchema.countDocuments().then(data=>{
+            return resp.status(200).json(data);
+        })
+
     }catch (error){
         return resp.status(500).json({'message':'internal server error'});
     }
@@ -80,5 +108,6 @@ module.exports={
     findById,
     update,
     deleteById,
-    findAll
+    findAll,
+    findCount
 }
