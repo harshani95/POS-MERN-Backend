@@ -64,7 +64,6 @@ const deleteById=async (req,resp)=>{
     }
 }
 
-
 const findAll=(req,resp)=>{
     try{
         const {searchText, page=1, size=10}=req.query;
@@ -85,12 +84,13 @@ const findAll=(req,resp)=>{
             .then(response=>{
                 return resp.status(200).json(response);
             })
- 
         
     }catch (error){
         return resp.status(500).json({'message':'internal server error'});
     }
 }
+
+
 
 const findCount=(req,resp)=>{
     try{
