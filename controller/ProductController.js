@@ -16,14 +16,27 @@ const create=(req,resp)=>{
 }
 
 
-const findById=(req,resp)=>{
-    ProductSchema.findOne({'_id':req.params.id}).then(selectedObj=>{
-        if(selectedObj!=null){
-            return  resp.status(200).json({'data':selectedObj});
+const findById= async(req,res)=>{
+    // ProductSchema.findOne({'_id':req.params.id}).then(selectedObj=>{
+    //     if(selectedObj!=null){
+    //         return  resp.status(200).json({'data':selectedObj});
+    //     }
+    //     return resp.status(404).json({'message':'product not found!'});
+    // });
+
+    try {
+        const product = await ProductSchema.findById(req.params.id);
+        if (product) {
+            res.status(200).json(product);
+        } else {
+            res.status(404).json({ message: 'product not found' });
         }
-        return resp.status(404).json({'message':'customer not found!'});
-    });
+    } catch (error) {
+        console.error('Error fetching product by ID:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }
+
 
 
 const update=async (req,resp)=>{
@@ -55,7 +68,6 @@ const deleteById=async (req,resp)=>{
     }
 }
 
-
 const findAll=(req,resp)=>{
     try{
         const {searchText, page=1, size=10}=req.query;
@@ -72,12 +84,16 @@ const findAll=(req,resp)=>{
 
         const data =  ProductSchema.find(query)
             .limit(pageSize)
-            .skip(skip);
-        return resp.status(200).json(data);
+            .skip(skip)
+            .then(response=>{
+                return resp.status(200).json(response);
+            })
+        //return resp.status(200).json(data);
     }catch (error){
         return resp.status(500).json({'message':'internal server error'});
     }
 }
+
 
 const findAllMin=(req,resp)=>{
     try{
