@@ -72,13 +72,17 @@ const findAll=(req,resp)=>{
         const pageSize=parseInt(size);
 
         const query ={};
-        if(searchText){
-            query.$text={$search:searchText}
-        }
+        // if(searchText){
+        //     query.$text={$search:searchText}
+        // }
 
+        if (searchText) {
+            query.name = { $regex: searchText, $options: 'i' };
+        }
+        
         const skip= (pageNumber-1) * pageSize;
 
-       const data =  CustomerSchema.find(query)
+        const data =  CustomerSchema.find(query)
             .limit(pageSize)
             .skip(skip)
             .then(response=>{
