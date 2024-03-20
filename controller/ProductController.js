@@ -37,8 +37,6 @@ const findById= async(req,res)=>{
     }
 }
 
-
-
 const update=async (req,resp)=>{
     const updateData = await ProductSchema.findOneAndUpdate({'_id':req.params.id},{
         $set:{
@@ -76,8 +74,12 @@ const findAll=(req,resp)=>{
         const pageSize=parseInt(size);
 
         const query ={};
-        if(searchText){
-            query.$text={$search:searchText}
+        // if(searchText){
+        //     query.$text={$search:searchText}
+        // }
+
+        if (searchText) {
+            query.name = { $regex: searchText, $options: 'i' };
         }
 
         const skip= (pageNumber-1) * pageSize;
