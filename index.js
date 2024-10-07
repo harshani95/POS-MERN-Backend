@@ -20,14 +20,28 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
-try {
-    mongoose.connect('mongodb://127.0.0.1:27017/posapi');
-    app.listen(port, () => {
-        console.log(`server Started & running on port ${port}`);
-    })
-} catch (e) {
-    console.log(e);
-}
+// try {
+//     mongoose.connect('mongodb://127.0.0.1:27017/posapi');
+//     app.listen(port, () => {
+//         console.log(`server Started & running on port ${port}`);
+//     })
+// } catch (e) {
+//     console.log(e);
+// }
+
+const startServer = async () => {
+    try {
+        await mongoose.connect('mongodb://127.0.0.1:27017/posapi');
+        app.listen(port, () => {
+            console.log(`Server started & running on port ${port}`);
+        });
+    } catch (e) {
+        console.log('Error connecting to MongoDB:', e);
+    }
+};
+
+startServer();
+
 
 app.get('/test-api', (req, resp) => {
     return resp.json({ 'message': 'Server Started!' })
